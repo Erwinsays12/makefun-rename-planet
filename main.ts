@@ -16,6 +16,21 @@ const ENTRY =
 const OUT_DIR = "/output";
 const OUT_FILE = `${OUT_DIR}/entry.txt`;
 
+// Gate self-check: the sealed scorer only accepts UTF-8 text of 1 to 200
+// characters, not only white space, on a single line. Refuse to write
+// anything that would fail the gate instead of submitting an invalid entry.
+if (
+  [...ENTRY].length < 1 ||
+  [...ENTRY].length > 200 ||
+  ENTRY.trim().length === 0 ||
+  ENTRY.includes("\n")
+) {
+  throw new Error(
+    `entry fails the gate: ${[...ENTRY].length} characters, ` +
+      `single line required`,
+  );
+}
+
 mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(OUT_FILE, ENTRY + "\n", "utf8");
 console.log(`Wrote ${[...ENTRY].length} characters to ${OUT_FILE}`);
